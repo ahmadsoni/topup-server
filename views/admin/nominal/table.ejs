@@ -2,9 +2,9 @@
   <thead>
     <tr>
       <th>No.</th>
-      <th>Nama Coint</th>
-      <th>Jumlah Coint</th>
-      <th>Harga Coint</th>
+      <th>Nama Coin</th>
+      <th>Jumlah Coin</th>
+      <th>Harga Coin</th>
       <th>Aksi</th>
     </tr>
   </thead>
@@ -12,8 +12,8 @@
     <% for(var i = 0; i < nominal.length; i++) { %>
       <tr>
         <td><%= i + 1 %></td>
-        <td><%= nominal[i].cointName %></td>
-        <td><%= nominal[i].cointQuantity %></td>
+        <td><%= nominal[i].coinName %></td>
+        <td><%= nominal[i].coinQuantity %></td>
         <td><%= nominal[i].price %></td>
         <td>
           <form action="/nominal/delete/<%= nominal[i].id %>?_method=DELETE" method="POST" >

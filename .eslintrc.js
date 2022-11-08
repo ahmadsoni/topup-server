@@ -5,9 +5,7 @@ module.exports = {
     es2021: true,
   },
   extends: 'airbnb-base',
-  overrides: [{
-
-  },
+  overrides: [
   ],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -17,5 +15,11 @@ module.exports = {
     'no-console': 0,
     'no-undef': 'off',
     'no-unused-vars': 'off',
+    camelcase: 'off',
+    'no-use-before-define': ['error', { functions: false, classes: false }],
+    'no-shadow': 'off',
+    'no-restricted-globals': ['error', 'event', 'fdescribe'],
+    'no-param-reassign': ['error', { props: false }],
+    // import should occur after import ignore
   },
 };

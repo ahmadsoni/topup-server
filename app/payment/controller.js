@@ -8,10 +8,12 @@ module.exports = {
       const alertStatus = req.flash('alertStatus');
 
       const alert = { message: alertMessage, status: alertStatus };
-      const payment = await Payment.find().populate('banks')
+      const payment = await Payment.find().populate('banks');
       res.render('admin/payment/view_payment', {
         payment,
         alert,
+        name: req.session.user.name,
+        title: 'Halaman Pembayaran',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -21,10 +23,12 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
-        const banks = await Bank.find()
+      const banks = await Bank.find();
 
       res.render('admin/payment/create', {
-        banks
+        banks,
+        name: req.session.user.name,
+        title: 'Halaman Tambah Pembayaran',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -49,11 +53,13 @@ module.exports = {
   viewEdit: async (req, res) => {
     try {
       const { id } = req.params;
-      const payment = await Payment.findOne({ _id: id }).populate('banks')
-      const banks = await Bank.findOne()
+      const payment = await Payment.findOne({ _id: id }).populate('banks');
+      const banks = await Bank.findOne();
       res.render('admin/payment/edit', {
         payment,
-        banks
+        banks,
+        name: req.session.user.name,
+        title: 'Halaman Ubah Pembayaran',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -66,7 +72,7 @@ module.exports = {
       const { id } = req.params;
       const { banks, type } = req.body;
       await Payment.findOneAndUpdate({ _id: id }, {
-        banks, type
+        banks, type,
       });
       req.flash('alertMessage', 'Berhasil Ubah Payment');
       req.flash('alertStatus', 'success');

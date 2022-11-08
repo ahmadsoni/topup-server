@@ -15,18 +15,18 @@ const paymentSchema = mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin','user'],
+    enum: ['admin', 'user'],
     default: 'admin',
   },
   status: {
     type: String,
     enum: ['Y', 'N'],
-    default: 'Y'
+    default: 'Y',
   },
-   phoneNumber: {
+  phoneNumber: {
     type: String,
     require: [true, 'Nomer telephon harus di isi'],
   },
-},{timestamps: true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', paymentSchema);

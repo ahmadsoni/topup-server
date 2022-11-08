@@ -8,12 +8,12 @@ const paymentSchema = mongoose.Schema({
   status: {
     type: String,
     enum: ['Y', 'N'],
-    default: 'Y'
+    default: 'Y',
   },
   banks: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Bank'
+    ref: 'Bank',
   }],
-},{timestamps: true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Payment', paymentSchema);

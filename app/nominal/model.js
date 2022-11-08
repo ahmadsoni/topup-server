@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const nominalSchema = mongoose.Schema({
-  cointQuantity: {
+  coinQuantity: {
     type: Number,
     default: 0,
   },
-  cointName: {
+  coinName: {
     type: String,
     require: [true, 'Nama koin harus di isi'],
   },
@@ -13,6 +13,6 @@ const nominalSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-},{timestamps: true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Nominal', nominalSchema);

@@ -5,7 +5,7 @@ const bankSchema = mongoose.Schema({
     type: String,
     require: [true, 'Nama Pemilik harus di isi'],
   },
-  nameBank: {
+  bankName: {
     type: String,
     require: [true, 'Nama Bank harus di isi'],
   },
@@ -13,6 +13,6 @@ const bankSchema = mongoose.Schema({
     type: String,
     require: [true, 'Nomer Rekening Bank harus di isi'],
   },
-},{timestamps: true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Bank', bankSchema);

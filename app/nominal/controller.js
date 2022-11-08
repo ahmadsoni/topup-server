@@ -11,6 +11,8 @@ module.exports = {
       res.render('admin/nominal/view_nominal', {
         nominal,
         alert,
+        name: req.session.user.name,
+        title: 'Halaman Nominal',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -20,7 +22,10 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
-      res.render('admin/nominal/create');
+      res.render('admin/nominal/create', {
+        name: req.session.user.name,
+        title: 'Halaman Tambah Nominal',
+      });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
       req.flash('alertStatus', 'danger');
@@ -29,8 +34,8 @@ module.exports = {
   },
   actionCreate: async (req, res) => {
     try {
-      const { cointName, cointQuantity, price } = req.body;
-      const nominal = await Nominal({ cointName, cointQuantity, price });
+      const { coinName, coinQuantity, price } = req.body;
+      const nominal = await Nominal({ coinName, coinQuantity, price });
       await nominal.save();
       req.flash('alertMessage', 'Berhasil Tambah Nominal');
       req.flash('alertStatus', 'success');
@@ -47,6 +52,8 @@ module.exports = {
       const nominal = await Nominal.findOne({ _id: id });
       res.render('admin/nominal/edit', {
         nominal,
+        name: req.session.user.name,
+        title: 'Halaman Edit Nominal',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -57,10 +64,10 @@ module.exports = {
   actionEdit: async (req, res) => {
     try {
       const { id } = req.params;
-      const { cointName, cointQuantity, price } = req.body;
+      const { coinName, coinQuantity, price } = req.body;
       await Nominal.findOneAndUpdate({ _id: id }, {
-        cointName,
-        cointQuantity,
+        coinName,
+        coinQuantity,
         price,
       });
       req.flash('alertMessage', 'Berhasil Ubah kategori');
