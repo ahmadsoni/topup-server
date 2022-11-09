@@ -13,7 +13,7 @@ module.exports = {
         category,
         alert,
         name: req.session.user.name,
-        title: 'Halaman Category'
+        title: 'Halaman Category',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -25,7 +25,7 @@ module.exports = {
     try {
       res.render('admin/category/create', {
         name: req.session.user.name,
-        title: 'Halaman Tambah Category'
+        title: 'Halaman Tambah Category',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);
@@ -54,7 +54,7 @@ module.exports = {
       res.render('admin/category/edit', {
         category,
         name: req.session.user.name,
-        title: 'Halaman Ubah Category'
+        title: 'Halaman Ubah Category',
       });
     } catch (err) {
       req.flash('alertMessage', `${err.message}`);

@@ -20,6 +20,8 @@ module.exports = {
     'no-shadow': 'off',
     'no-restricted-globals': ['error', 'event', 'fdescribe'],
     'no-param-reassign': ['error', { props: false }],
-    // import should occur after import ignore
+    'consistent-return': 'off',
+    'no-underscore-dangle': 'off',
+    'no-useless-catch': 'off',
   },
 };
