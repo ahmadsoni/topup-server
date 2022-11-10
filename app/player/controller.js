@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+const { nextTick } = require('process');
 const Player = require('./model');
 const Voucher = require('../voucher/model');
 const Category = require('../category/model');
@@ -5,6 +8,8 @@ const Bank = require('../bank/model');
 const Payment = require('../payment/model');
 const Nominal = require('../nominal/model');
 const Transaction = require('../transaction/model');
+const config = require('../../config');
+const { listenerCount } = require('./model');
 
 module.exports = {
   landingPage: async (req, res) => {
@@ -118,11 +123,135 @@ module.exports = {
         };
       }
       const history = await Transaction.find(criteria);
+      const total = await Transaction.aggregate([
+        { $match: criteria },
+        {
+          $group: {
+            _id: null,
+            value: { $sum: '$value' },
+          },
+        },
+      ]);
       res.status(200).json({
         data: history,
+        total: total.length ? total[0].value : 0,
       });
     } catch (err) {
       res.status(500).json({ message: err.message || 'Internal server error' });
+    }
+  },
+  historyDetail: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const history = await Transaction.findOne({ _id: id });
+      if (!history) return res.status(404).json({ message: 'history tidak di temukan' });
+      res.status(200).json({ data: history });
+    } catch (err) {
+      res.status(500).json({ message: err.message || 'Internal server error' });
+    }
+  },
+  dashboard: async (req, res) => {
+    try {
+      const count = await Transaction.aggregate([{ $match: { player: req.player._id } }, {
+        $group: {
+          _id: '$category',
+          value: { $sum: '$value' },
+        },
+      }]);
+      const category = await Category.find({});
+      category.forEach((element) => {
+        count.forEach((data) => {
+          if (data._id.toString() === element._id.toString()) {
+            data.name = element.name;
+          }
+        });
+      });
+      const history = await Transaction.find({ player: req.player._id })
+        .populate('category')
+        .sort({ updatedAt: -1 });
+      res.status(200).json({ data: history, count });
+    } catch (err) {
+      res.status(500).json({ message: err.message || 'Internal server error' });
+    }
+  },
+  profile: async (req, res) => {
+    try {
+      const player = {
+        id: req.player._id,
+        username: req.player.username,
+        email: req.player.email,
+        name: req.player.name,
+        avatar: req.player.avatar,
+        phoneNumber: req.player.phoneNumber,
+      };
+      res.status(200).json({ data: player });
+    } catch (err) {
+      res.status(500).json({ message: err.message || 'Internal server error' });
+    }
+  },
+  editProfile: async (req, res) => {
+    try {
+      const { name = '', phoneNumber = '' } = req.body;
+      const payload = {};
+      if (name.length)payload.name = name;
+      if (phoneNumber.length)payload.phoneNumber = phoneNumber;
+
+      if (req.file) {
+        const tmp_path = req.file.path;
+        const originaExt = req.file.originalname.split('.')[req.file.originalname.split('.').length - 1];
+        const filename = `${req.file.filename}.${originaExt}`;
+        const target_path = path.resolve(config.rootPath, `public/uploads/${filename}`);
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+
+        src.pipe(dest);
+        src.on('end', async () => {
+          try {
+            let player = await Player.findOne({ _id: req.player_id });
+            console.log(player);
+            const currentImage = `${config.rootPath}/public/uploads/${player.avatar}`;
+            if (fs.existsSync(currentImage)) {
+              fs.unlinkSync(currentImage);
+            }
+            player = await Player.findOneAndUpdate({
+              _id: req.player_id,
+            }, {
+              ...payload,
+              avatar: filename,
+            }, { new: true, runValidators: true });
+            res.status(200).json({
+              data: player.id,
+              name: player.name,
+              phoneNumber: player.phoneNumber,
+              avatar: player.avatar,
+            });
+          } catch (err) {
+            res.status(401).json({ message: err.message || 'terdapat kesalahan saat upload avatar' });
+          }
+        });
+        src.on('err', async () => {
+          next();
+        });
+      } else {
+        const player = await Player.findOneAndUpdate({
+          _id: req.player._id,
+        }, payload, { new: true, runValidators: true });
+        res.status(201).json({
+          data: player.id,
+          name: player.name,
+          phoneNumber: player.phoneNumber,
+          avatar: player.avatar,
+        });
+      }
+    } catch (err) {
+      if (err && err.name === 'ValidationError') {
+        res.status(422).json({
+          error: 1,
+          message: err.message,
+          fields: err.errors,
+        });
+      }
     }
   },
 };
