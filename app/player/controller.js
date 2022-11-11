@@ -28,6 +28,14 @@ module.exports = {
       const voucher = await Voucher.find({ _id: id })
         .populate('category')
         .populate('nominals')
+        // get payment and bank in payment model
+        .populate({
+          path: 'payment',
+          populate: {
+            path: 'banks',
+            model: 'Bank',
+          },
+        })
         .populate('user', '_id name phoneNumber');
       if (!voucher) {
         return res.status(404).json({ message: 'Voucher game tidak di temukan!' });
