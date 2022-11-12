@@ -24,7 +24,11 @@ module.exports = {
             const player = new Player({ ...payload, avatar: filename });
             await player.save();
             delete player._doc.password;
-            res.status(201).json({ data: player });
+            res.status(201).json({
+              data: player,
+              message: 'Player created successfully',
+              error: 2,
+            });
           } catch (err) {
             if (err && err.name === 'ValidationError') {
               return res.status(422).json({
@@ -40,7 +44,11 @@ module.exports = {
         const player = new Player(payload);
         await player.save();
         delete player._doc.password;
-        res.status(201).json({ data: player });
+        res.status(201).json({
+          data: player,
+          message: 'Player created successfully',
+          error: 2,
+        });
       }
     } catch (err) {
       if (err && err.name === 'ValidationError') {
@@ -72,6 +80,7 @@ module.exports = {
 
           res.status(200).json({
             data: { token },
+            message: 'Login success',
           });
         } else {
           res.status(403).json({
